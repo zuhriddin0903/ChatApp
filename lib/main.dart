@@ -1,4 +1,5 @@
 import 'package:chatapp/Desktop/DesktopHome.dart';
+import 'package:chatapp/Mobile/features/Auth/domein/Auth_service.dart';
 import 'package:chatapp/Mobile/features/Auth/ui/LoginPage.dart';
 import 'package:chatapp/Tablet/TabletHome.dart';
 import 'package:chatapp/responsive.dart';
@@ -13,6 +14,7 @@ void main()async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(const MyApp());
+  await AuthService().signInWithGoogle();
 }
 
 class MyApp extends StatelessWidget {

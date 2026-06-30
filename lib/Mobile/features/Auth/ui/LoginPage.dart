@@ -1,5 +1,6 @@
 import 'package:chatapp/Mobile/features/Auth/domein/Auth_service.dart';
 import 'package:chatapp/Mobile/features/Auth/ui/RegisterPage.dart';
+import 'package:chatapp/Mobile/features/Home/ui/HomePage.dart';
 import 'package:chatapp/utils/MyTextfield.dart';
 import 'package:chatapp/utils/Mybutton.dart';
 import 'package:flutter/material.dart';
@@ -17,12 +18,33 @@ class _LoginpageState extends State<Loginpage> {
   final TextEditingController _emailcontroller = TextEditingController();
   final TextEditingController _passwordcontroller = TextEditingController();
 
-  Future SignIn() async {
-    AuthService authService = AuthService();
-    authService.signInWithEmailPassword(
-      _emailcontroller.text.trim(),
-      _passwordcontroller.text.trim(),
-    );
+  void LoginIn(BuildContext context) async {
+    final _authlogin = AuthService();
+    try {
+      await _authlogin.signInWithEmailPassword(
+        _emailcontroller.text,
+        _passwordcontroller.text,
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => MyHomePage()),
+      );
+    } catch (e) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Parollar mos kelmadi!"),
+          content: Text("Iltimos, parollarni qayta tekshiring."),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text("OK"),
+            ),
+          ],
+        ),
+      );
+    }
+    ;
   }
 
   @override
@@ -56,15 +78,21 @@ class _LoginpageState extends State<Loginpage> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   InkWell(
-                    onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>ForgotPage()));
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ForgotPage()),
+                      );
                     },
-                    child: Text('Forgot Password?', style: TextStyle(color: Colors.red)),
+                    child: Text(
+                      'Forgot Password?',
+                      style: TextStyle(color: Colors.red),
+                    ),
                   ),
                 ],
               ),
               SizedBox(height: 10),
-              Mybutton(buttonName: 'Sign Up', onTap: SignIn),
+              Mybutton(buttonName: 'Sign In', onTap: () => LoginIn(context)),
               SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -83,7 +111,22 @@ class _LoginpageState extends State<Loginpage> {
                       style: TextStyle(color: Colors.blue),
                     ),
                   ),
+
                 ],
+              ),
+              SizedBox(width: 40),
+              ListTile(
+                onTap: ()async{
+                  try {
+                    await AuthService().signInWithGoogle();
+                  } catch (e) {
+                    // xatolikni ko'rsatish
+                  }
+                },
+                leading: Image.network(
+                  "https://cdn-icons-png.flaticon.com/128/300/300221.png",
+                ),
+                title: Text("Sign in with GOOGLE"),
               ),
             ],
           ),
